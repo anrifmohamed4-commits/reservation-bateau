@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Résa Bateau</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+</style>
+
+</head>
+
+
+<body class="bg-gray-50">
+
+
+<section class="max-w-7xl mx-auto px-6 py-16">
+
+
+<h2 class="text-4xl font-bold text-blue-900 mb-10 text-center">
+
+🚢 Nos trajets disponibles
+
+</h2>
+
+
+<div id="trips" class="grid md:grid-cols-3 gap-8">
+
+</div>
+
+
+</section>
+
+
+
+
+<!-- MODAL RESERVATION -->
+
+
+<div id="modal" 
+class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+
+<div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4">
+
+
+<h3 id="modal-title"
+class="text-2xl font-bold mb-6 text-center">
+</h3>
+
+
+
+<form id="form-reservation">
+
+
+
+<input type="hidden" id="bateau_id">
+
+
+
+<div class="mb-5">
+
+<label class="block mb-2">
+Nom complet
+</label>
+
+
+<input id="nom_client"
+type="text"
+required
+class="w-full border p-4 rounded-xl">
+
+</div>
+
+
+
+
+<div class="mb-5">
+
+<label class="block mb-2">
+Nombre de passagers
+</label>
+
+
+<input id="nb_passagers"
+type="number"
+value="1"
+min="1"
+required
+class="w-full border p-4 rounded-xl">
+
+</div>
+<div class="mb-5">
+
+<label class="block mb-2">
+Choisir les sièges
+</label>
+
+<div id="sieges"
+class="grid grid-cols-4 gap-3">
+</div>
+
+</div>
+
+
+
+<div class="flex gap-4">
+
+
+<button type="button"
+onclick="closeModal()"
+class="flex-1 border p-4 rounded-xl">
+
+Annuler
+
+</button>
+
+
+
+<button type="submit"
+class="flex-1 bg-blue-600 text-white p-4 rounded-xl">
+
+Confirmer
+
+</button>
+
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+let trajets = [];
+
+let trajetActuel = null;
+let siegesChoisis = [];
+
+
+// Charger les trajets depuis API
+
+async function chargerTrajets(){
+
+
+try{
+
+
+const response = await fetch(
+"http://localhost:3000/api/trips"
+);
+
+
+
+trajets = await response.json();
+
+
+
+afficherTrajets();
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+
+alert("Erreur chargement trajets");
+
+
+}
+
+
+}
+
+
+
+
+// Affichage cartes
+
+
+function afficherTrajets(){
+
+
+const container =
+document.getElementById("trips");
+
+
+
+container.innerHTML = "";
+
+
+
+trajets.forEach(trajet => {
+
+
+
+const card = document.createElement("div");
+
+
+
+card.className =
+"card bg-white rounded-3xl shadow-xl p-7";
+
+
+
+card.innerHTML = `
+
+
+<div class="text-4xl mb-4">
+⛴️
+</div>
+
+
+<h3 class="text-2xl font-bold">
+
+${trajet.depart} → ${trajet.arrivee}
+
+</h3>
+
+
+
+<p class="text-gray-600 my-4">
+
+${trajet.date} • ${trajet.duree}
+
+</p>
+
+
+
+<p class="text-4xl font-bold text-blue-600">
+
+${trajet.prix} €
+
+</p>
+
+
+
+<button onclick="ouvrirReservation('${trajet.id}')"
+
+class="mt-6 w-full bg-blue-600 text-white p-4 rounded-xl">
+
+Réserver ce trajet
+
+</button>
+
+
+
+`;
+
+
+
+container.appendChild(card);
+
+
+
+});
+
+
+}
+
+function afficherSieges(){
+
+    const container = document.getElementById("sieges");
+
+    container.innerHTML = "";
+
+    siegesChoisis = [];
+
+
+    const listeSieges = [
+        "A1","A2","A3","A4",
+        "B1","B2","B3","B4",
+        "C1","C2","C3","C4"
+    ];
+
+
+    listeSieges.forEach(siege => {
+
+
+        const bouton = document.createElement("button");
+
+        bouton.type = "button";
+
+        bouton.textContent = siege;
+
+
+        bouton.className =
+        "border p-3 rounded-xl bg-gray-100";
+
+
+        bouton.onclick = function(){
+
+
+            if(siegesChoisis.includes(siege)){
+
+
+                siegesChoisis =
+                siegesChoisis.filter(
+                    s => s !== siege
+                );
+
+
+                bouton.classList.remove(
+                    "bg-blue-600",
+                    "text-white"
+                );
+
+
+            } else {
+
+
+                siegesChoisis.push(siege);
+
+
+                bouton.classList.add(
+                    "bg-blue-600",
+                    "text-white"
+                );
+
+
+            }
+
+
+        };
+
+
+        container.appendChild(bouton);
+
+
+    });
+
+
+}
+
+
+
+function ouvrirReservation(id){
+
+
+
+trajetActuel =
+trajets.find(t => t.id === id);
+
+
+
+document.getElementById("modal-title")
+.textContent =
+trajetActuel.depart +
+" → " +
+trajetActuel.arrivee;
+afficherSieges();
+
+
+document.getElementById("bateau_id")
+.value =
+trajetActuel.id;
+
+
+
+document.getElementById("modal")
+.classList.remove("hidden");
+
+
+
+}
+
+
+
+
+function closeModal(){
+
+
+document.getElementById("modal")
+.classList.add("hidden");
+
+
+}
+
+
+
+
+
+// Envoi réservation
+
+
+document
+.getElementById("form-reservation")
+.addEventListener("submit", async function(e){
+
+
+e.preventDefault();
+
+
+
+const data = {
+
+
+bateau_id: trajetActuel.id,
+
+
+date_depart: trajetActuel.date,
+
+
+port_depart: trajetActuel.depart,
+
+
+port_arrivee: trajetActuel.arrivee,
+
+
+nb_passagers:
+Number(
+document.getElementById("nb_passagers").value
+),
+
+nom_client:
+document.getElementById("nom_client").value,
+
+
+sieges:
+siegesChoisis.join(",")
+
+
+};
+
+
+
+
+const response = await fetch(
+
+"http://localhost:3000/api/reservations",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify(data)
+
+
+}
+
+);
+
+
+
+const resultat =
+await response.json();
+
+
+
+
+if(resultat.status==="success"){
+
+
+alert(
+"✅ Réservation réussie : "
++
+resultat.reservation_id
+);
+
+
+
+closeModal();
+
+
+
+}
+
+
+});
+
+
+
+
+
+chargerTrajets();
+
+
+
+</script>
+
+
+</body>
+
+</html>

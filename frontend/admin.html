@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Administration Bateau</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-gray-100">
+
+
+<div class="max-w-7xl mx-auto p-10">
+
+<div class="grid md:grid-cols-3 gap-6 mb-10">
+
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+
+        <h2 class="text-lg font-bold text-gray-600">
+            📋 Réservations
+        </h2>
+
+        <p id="nbReservations"
+        class="text-4xl font-bold text-blue-600 mt-4">
+            0
+        </p>
+
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+
+        <h2 class="text-lg font-bold text-gray-600">
+            👥 Passagers
+        </h2>
+
+        <p id="nbPassagers"
+        class="text-4xl font-bold text-green-600 mt-4">
+            0
+        </p>
+
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+
+        <h2 class="text-lg font-bold text-gray-600">
+            💰 Revenus
+        </h2>
+
+        <p id="revenus"
+        class="text-4xl font-bold text-red-600 mt-4">
+            0 €
+        </p>
+
+    </div>
+
+</div>
+
+<h1 class="text-4xl font-bold text-blue-900 mb-10">
+
+🚢 Administration Réservations
+
+</h1>
+
+
+<button
+onclick="deconnexion()"
+class="bg-red-600 text-white px-5 py-3 rounded-xl mb-6">
+
+🚪 Déconnexion
+
+</button>
+
+
+<table class="w-full bg-white shadow-xl rounded-xl">
+
+
+<thead class="bg-blue-600 text-white">
+
+<tr>
+
+<th class="p-4">ID</th>
+
+<th class="p-4">Client</th>
+
+<th class="p-4">Départ</th>
+
+<th class="p-4">Arrivée</th>
+
+<th class="p-4">Passagers</th>
+
+<th class="p-4">Prix</th>
+<th class="p-4">Sièges</th>
+
+<th class="p-4">Action</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="reservations">
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+
+<script>
+
+
+async function chargerReservations(){
+
+
+    const response = await fetch(
+        "http://localhost:3000/api/reservations"
+    );
+
+
+    const reservations = await response.json();
+document.getElementById("nbReservations").textContent =
+reservations.length;
+
+const totalPassagers = reservations.reduce(
+    (total, reservation) => total + Number(reservation.nb_passagers),
+    0
+);
+
+document.getElementById("nbPassagers").textContent =
+totalPassagers;
+
+const totalRevenus = reservations.reduce(
+    (total, reservation) => total + Number(reservation.prix_total),
+    0
+);
+
+document.getElementById("revenus").textContent =
+totalRevenus.toFixed(2) + " €";
+
+
+    const tableau = document.getElementById(
+        "reservations"
+    );
+
+
+
+    tableau.innerHTML = "";
+
+
+
+    reservations.forEach(reservation => {
+
+
+        tableau.innerHTML += `
+
+
+<tr class="border-b">
+
+
+<td class="p-4">
+${reservation.id}
+</td>
+
+
+<td class="p-4">
+${reservation.nom_client}
+</td>
+
+
+<td class="p-4">
+${reservation.port_depart}
+</td>
+
+
+<td class="p-4">
+${reservation.port_arrivee}
+</td>
+
+
+<td class="p-4">
+${reservation.nb_passagers}
+</td>
+
+
+<td class="p-4">
+${reservation.prix_total} €
+</td>
+<td class="p-4">
+${reservation.sieges || "Non choisi"}
+</td>
+
+
+
+<td class="p-4">
+
+
+<button
+
+onclick="supprimerReservation('${reservation.id}')"
+
+class="bg-red-600 text-white px-4 py-2 rounded-xl">
+
+🗑️ Supprimer
+
+</button>
+
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+async function supprimerReservation(id){
+
+
+    if(!confirm("Supprimer cette réservation ?")){
+
+        return;
+
+    }
+
+
+
+    const response = await fetch(
+
+        "http://localhost:3000/api/reservations/" + id,
+
+        {
+
+            method:"DELETE"
+
+        }
+
+    );
+
+
+
+    const resultat = await response.json();
+
+
+
+    alert(resultat.message);
+
+
+
+    chargerReservations();
+
+
+}
+
+
+
+chargerReservations();
+
+
+function deconnexion(){
+
+    localStorage.removeItem("admin");
+
+    window.location.href = "/login.html";
+
+}
+
+
+</script>
+
+</script>
+
+
+
+</body>
+
+</html>
