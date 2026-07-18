@@ -1,16 +1,23 @@
 {
   "name": "mr-nico",
   "version": "1.0.0",
-  "description": "",
+  "description": "Application web de réservation de voyage en bateau",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "reservation",
+    "bateau",
+    "voyage"
+  ],
+  "author": "anrifmohamed4-commits",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
