@@ -475,11 +475,13 @@ body:JSON.stringify(data)
 
 );
 
+const resultat = await response.json();
 
-
-const resultat =
-await response.json();
-
+if(resultat.status !== "success"){
+    alert("Erreur réservation");
+    console.log(resultat);
+    return;
+}
 
 
 alert(
