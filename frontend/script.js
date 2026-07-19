@@ -32,8 +32,8 @@ if (reservationForm) {
 
 
         const response = await fetch(
-            "http://localhost:3000/api/reservations",
-            {
+    "/api/reservations",
+    {
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json"
@@ -74,10 +74,9 @@ async function chargerTrajets(){
         return;
     }
 
-
-    const response = await fetch(
-        "http://localhost:3000/api/trips"
-    );
+const response = await fetch(
+    "/api/trips"
+);
 
 
     const trips = await response.json();
