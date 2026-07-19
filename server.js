@@ -97,7 +97,19 @@ sieges
 
 }=req.body;
 
+let prix = 0;
 
+if (bateau_id === "BATEAU-7842") {
+    prix = 50;
+}
+
+if (bateau_id === "BATEAU-3921") {
+    prix = 70;
+}
+
+if (bateau_id === "BATEAU-6578") {
+    prix = 80;
+}
 
 const id = "RES-" + Date.now();
 
