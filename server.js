@@ -133,7 +133,7 @@ nom_client,
 
 sieges,
 
-1240.50
+prix
 
 ],
 
@@ -173,7 +173,7 @@ status:"success",
 
 reservation_id:id,
 
-prix_total:1240.50
+prix_total:prix
 
 });
 
