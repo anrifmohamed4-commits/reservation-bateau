@@ -2,59 +2,30 @@ const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("./reservations.db");
 
+// Supprime la table existante (développement)
+db.run(`DROP TABLE IF EXISTS reservations`);
 
+// Recrée la table avec la colonne sieges
 db.run(`
-
-CREATE TABLE IF NOT EXISTS reservations (
-
+CREATE TABLE reservations (
     id TEXT PRIMARY KEY,
-
     bateau_id TEXT,
-
     date_depart TEXT,
-
     port_depart TEXT,
-
     port_arrivee TEXT,
-
     nb_passagers INTEGER,
-
     nom_client TEXT,
-
+    sieges TEXT,
     prix_total REAL
-
 )
-
-`);
-
-
-// Ajout colonne sièges si elle n'existe pas
-
-db.run(`
-
-ALTER TABLE reservations ADD COLUMN sieges TEXT
-
-`, function(error){
-
-    if(error){
-
-        if(error.message.includes("duplicate column name")){
-
-            console.log("✅ Colonne sièges déjà présente");
-
-        }
-
+`, (err) => {
+    if (err) {
+        console.error("Erreur création table :", err);
     } else {
-
-        console.log("✅ Colonne sièges ajoutée");
-
+        console.log("✅ Table reservations créée");
     }
-
 });
 
-
-
 console.log("✅ Base SQLite prête");
-
 
 module.exports = db;
