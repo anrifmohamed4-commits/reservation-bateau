@@ -124,10 +124,9 @@ class="bg-red-600 text-white px-5 py-3 rounded-xl mb-6">
 
 async function chargerReservations(){
 
-
-    const response = await fetch(
-        "http://localhost:3000/api/reservations"
-    );
+const response = await fetch(
+    "/api/reservations"
+);
 
 
     const reservations = await response.json();
@@ -248,12 +247,11 @@ async function supprimerReservation(id){
     }
 
 
+const response = await fetch(
 
-    const response = await fetch(
+    "/api/reservations/" + id,
 
-        "http://localhost:3000/api/reservations/" + id,
-
-        {
+    {
 
             method:"DELETE"
 
