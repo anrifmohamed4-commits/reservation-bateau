@@ -174,7 +174,7 @@ try{
 
 
 const response = await fetch(
-"/api/trips"
+"http://localhost:3000/api/trips"
 );
 
 
@@ -458,7 +458,7 @@ siegesChoisis.join(",")
 
 const response = await fetch(
 
-"/api/reservations",
+"http://localhost:3000/api/reservations",
 
 {
 
@@ -484,23 +484,16 @@ await response.json();
 
 
 
-
-if(resultat.status==="success"){
-
-
 alert(
 "✅ Réservation réussie : "
 +
 resultat.reservation_id
 );
 
-
-
 closeModal();
 
 
 
-}
 
 
 });
